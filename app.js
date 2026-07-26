@@ -108,10 +108,7 @@ async function openIssue(issueId) {
       },
     });
 
-    await flipbook.loadDocument(renderer, {
-      title: 'The Aleph Telegram',
-      issueLabel: issue.title,
-    });
+    await flipbook.loadDocument(renderer);
   } catch (err) {
     console.error(err);
     ui.hideSpinner(stage);

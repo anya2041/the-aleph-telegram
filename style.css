@@ -260,6 +260,9 @@ body {
   height: 100%;
   opacity: 0;
   transition: opacity 0.25s ease;
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
 }
 .page-canvas.is-rendered { opacity: 1; }
 
@@ -273,43 +276,11 @@ body {
   opacity: 0.6;
 }
 
-.page-cover {
-  background:
-    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.08), transparent 55%),
-    linear-gradient(135deg, var(--maroon-deep), var(--ink) 78%);
-  color: var(--paper);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: inset 0 0 0 1px rgba(169,124,52,0.5), inset 0 0 30px rgba(0,0,0,0.5);
-}
-
-.cover-content {
-  text-align: center;
-  padding: 10%;
-  width: 100%;
-}
-.cover-rule {
-  height: 2px;
-  background: var(--brass-light);
-  margin: 14px auto;
-  width: 60%;
-  opacity: 0.8;
-}
-.cover-title {
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: clamp(1.3rem, 5vw, 2.1rem);
-  letter-spacing: 0.02em;
-  line-height: 1.15;
-}
-.cover-issue {
-  font-family: var(--font-ticker);
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--brass-light);
-  margin-top: 6px;
+/* First and last PDF pages are marked data-density="hard" and act as the
+   real covers — no synthetic title card, just a slightly heavier edge/
+   shadow so they read as a binding rather than an interior leaf. */
+.page--cover {
+  box-shadow: inset 0 0 0 1px rgba(169,124,52,0.35), inset 0 0 24px rgba(0,0,0,0.18);
 }
 
 /* ==========================================================================

@@ -56,28 +56,42 @@ testing; replace or remove them.
 - `PDFRenderer.load()` opens the PDF via `pdfjsLib.getDocument()` and reads
   page 1's aspect ratio to size the book.
 - `Flipbook.loadDocument()` builds one lightweight `<div class="page">` per
-  PDF page (plus a front and back hard cover), each holding an empty
-  `<canvas>`, and hands them to `page-flip`'s `loadFromHTML()`.
+  PDF page — no synthetic cover is inserted. Page 1 and the last page are
+  marked `data-density="hard"` so **your PDF's own first and last pages
+  become the hard covers**, exactly as you designed them.
 - On `init` / `flip` / `changeOrientation`, `Flipbook._updateRenderWindow()`
   computes which PDF pages should be visible soon (1 behind, current, and
   3 ahead) and calls `PDFRenderer.renderPageToCanvas()` for each — sized to
-  the canvas's actual CSS pixels × `devicePixelRatio` (capped at 3.5×, and
-  multiplied further while zoomed in, so text stays crisp).
+  the page's actual CSS pixels × `devicePixelRatio` (capped at 3.5×, and
+  multiplied further while zoomed in, so text stays crisp) — into a
+  throwaway offscreen canvas, then hands the result to the page's `<img>`
+  as a Blob URL.
 - Pages that fall out of that window are torn down: the render task is
-  cancelled, the canvas is cleared and shrunk to `0×0`, and the PDF.js page
-  proxy is released — so memory stays flat no matter how long the issue is.
+  cancelled, the Blob URL is revoked, and the PDF.js page proxy is
+  released — so memory stays flat no matter how long the issue is.
 - Resizing the window re-rasterizes the currently visible pages (debounced)
   so they stay sharp at the new size instead of just being CSS-scaled and
   blurry.
 
-## Notable implementation detail
+## Notable implementation details
 
-`page-flip`'s own `destroy()` removes its container element from the DOM
-(`this.block.remove()`). Because issues can be switched at runtime, each
-`loadDocument()` call creates a fresh, disposable `<div class="flipbook-mount">`
-inside the persistent `#flipbook` wrapper, rather than handing page-flip the
-same node twice — otherwise the second issue would silently render into a
-detached, zero-size element.
+**Real covers, no title card.** `page-flip`'s own `destroy()` removes its
+container element from the DOM (`this.block.remove()`). Because issues can
+be switched at runtime, each `loadDocument()` call creates a fresh,
+disposable `<div class="flipbook-mount">` inside the persistent `#flipbook`
+wrapper, rather than handing page-flip the same node twice — otherwise the
+second issue would silently render into a detached, zero-size element.
+
+**Canvas → `<img>` for the display layer.** PDF.js still renders every page
+fresh, on demand, into a canvas — nothing is precomputed or stored. But the
+page's *visible* element is an `<img>` whose `src` is a Blob URL of that
+render, not the canvas itself. This matters because `page-flip` clones a
+page's DOM node (`cloneNode`) to animate a soft flip, and cloning a
+`<canvas>` copies the element but not its drawn pixels (a standard browser
+limitation, not a bug in page-flip) — so a live `<canvas>` page goes blank
+or glitchy mid-flip. `<img>` clones its bitmap correctly, so flips stay
+smooth. The Blob URL is revoked the moment the page leaves the render
+window, so nothing accumulates or gets written to disk.
 
 ## Features
 
