@@ -110,14 +110,9 @@ body {
 }
 
 .morse-divider {
-  height: 10px;
+  height: 2px;
   margin-top: clamp(10px, 1.8vw, 18px);
-  background-image:
-    linear-gradient(var(--maroon), var(--maroon)),
-    repeating-linear-gradient(90deg, var(--ink) 0 10px, transparent 10px 16px, var(--ink) 16px 22px, transparent 22px 34px);
-  background-size: 100% 2px, 100% 2px;
-  background-position: top, bottom;
-  background-repeat: no-repeat, repeat-x;
+  background: var(--maroon);
   opacity: 0.85;
 }
 
