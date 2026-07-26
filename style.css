@@ -1,0 +1,456 @@
+/* ==========================================================================
+   The Aleph Telegram — design tokens
+   Palette: parchment paper, telegraph maroon rule, brass hardware, deep ink.
+   Type: Fraunces (masthead/display), Source Serif 4 (reading UI),
+         Special Elite (ticker / typewriter utility — the telegram voice).
+   Signature: the morse-dash rule + the perforated "ticket stub" page counter.
+   ========================================================================== */
+
+:root {
+  --parchment: #ede2c8;
+  --parchment-dark: #ddcda3;
+  --paper: #faf3e2;
+  --ink: #2a231c;
+  --ink-soft: #56493a;
+  --maroon: #7c2c26;
+  --maroon-deep: #591d19;
+  --brass: #a97c34;
+  --brass-light: #cda658;
+  --shadow-color: 30, 20, 10;
+
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-body: "Source Serif 4", Georgia, serif;
+  --font-ticker: "Special Elite", "Courier New", monospace;
+
+  --radius-sm: 3px;
+  --radius-md: 6px;
+
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Reduce motion for anyone who's asked for it. */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+::selection { background: var(--brass-light); color: var(--ink); }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0; padding: 0; margin: -1px;
+}
+
+/* --------------------------------------------------------------------------
+   Parchment background: warm base + subtle fiber texture + soft vignette.
+   -------------------------------------------------------------------------- */
+.parchment-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--parchment);
+  background-image:
+    radial-gradient(ellipse at 20% 15%, rgba(255,255,255,0.35), transparent 55%),
+    radial-gradient(ellipse at 82% 78%, rgba(255,255,255,0.22), transparent 60%),
+    repeating-linear-gradient(115deg, rgba(124,44,38,0.035) 0px, rgba(124,44,38,0.035) 1px, transparent 1px, transparent 3px),
+    repeating-linear-gradient(25deg, rgba(42,35,28,0.03) 0px, rgba(42,35,28,0.03) 1px, transparent 1px, transparent 4px),
+    radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(42,35,28,0.16) 100%);
+}
+
+/* ==========================================================================
+   Masthead
+   ========================================================================== */
+.masthead {
+  padding: clamp(14px, 2.4vw, 26px) clamp(16px, 4vw, 48px) 0;
+  flex: 0 0 auto;
+}
+
+.masthead__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.masthead__title {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  font-size: clamp(1.6rem, 3.6vw, 2.6rem);
+  margin: 0;
+  color: var(--ink);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.masthead__controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.morse-divider {
+  height: 10px;
+  margin-top: clamp(10px, 1.8vw, 18px);
+  background-image:
+    linear-gradient(var(--maroon), var(--maroon)),
+    repeating-linear-gradient(90deg, var(--ink) 0 10px, transparent 10px 16px, var(--ink) 16px 22px, transparent 22px 34px);
+  background-size: 100% 2px, 100% 2px;
+  background-position: top, bottom;
+  background-repeat: no-repeat, repeat-x;
+  opacity: 0.85;
+}
+
+/* ==========================================================================
+   Buttons & controls
+   ========================================================================== */
+.btn {
+  font-family: var(--font-ticker);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-sm);
+  padding: 9px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.btn:hover { background: var(--maroon-deep); transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn:focus-visible { outline: 2px solid var(--brass-light); outline-offset: 2px; }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--ink-soft);
+}
+.btn--ghost:hover { background: rgba(42,35,28,0.08); color: var(--ink); }
+
+.btn--tiny { padding: 6px 10px; font-size: 0.7rem; }
+
+.btn--icon {
+  width: 38px; height: 38px; padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.05rem;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--brass);
+}
+.btn--icon:hover { background: var(--brass-light); }
+
+.btn--nav {
+  width: 46px; height: 46px; padding: 0;
+  border-radius: 50%;
+  justify-content: center;
+  font-size: 1.4rem;
+  background: radial-gradient(circle at 35% 30%, var(--brass-light), var(--brass) 70%);
+  color: var(--maroon-deep);
+  border: 1px solid var(--maroon-deep);
+  box-shadow: 0 2px 4px rgba(var(--shadow-color), 0.35);
+}
+.btn--nav:hover { filter: brightness(1.06); transform: translateY(-1px); }
+
+.issue-select-wrap { display: inline-flex; }
+.issue-select {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--ink-soft);
+  background: var(--paper);
+  color: var(--ink);
+  max-width: 46vw;
+}
+.issue-select:focus-visible { outline: 2px solid var(--brass-light); outline-offset: 1px; }
+
+/* ==========================================================================
+   Stage — where the flipbook floats
+   ========================================================================== */
+.stage {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(14px, 3vw, 40px);
+  min-height: 0;
+  overflow: hidden;
+}
+.stage.is-zoomed { overflow: auto; align-items: flex-start; }
+
+.flipbook-shadow {
+  position: absolute;
+  left: 50%; top: 54%;
+  width: min(78vw, 900px);
+  height: 60px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse at center, rgba(var(--shadow-color), 0.45), transparent 72%);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+.flipbook-wrap {
+  position: relative;
+  width: min(92vw, 1080px);
+  height: min(76vh, 860px);
+  transition: transform 0.25s ease;
+  will-change: transform;
+}
+
+.flipbook { width: 100%; height: 100%; }
+.flipbook-mount { width: 100%; height: 100%; }
+
+/* page-flip internal structure gets a soft ambient lift */
+.stf__parent { filter: drop-shadow(0 18px 34px rgba(var(--shadow-color), 0.4)); }
+
+/* ==========================================================================
+   Pages
+   ========================================================================== */
+.page {
+  background: var(--paper);
+  overflow: hidden;
+  position: relative;
+  background-image:
+    radial-gradient(ellipse at 8% 6%, rgba(124,44,38,0.05), transparent 40%),
+    linear-gradient(var(--paper), var(--paper));
+}
+
+.page-canvas-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(
+    45deg, rgba(42,35,28,0.05) 0 2px, transparent 2px 10px
+  );
+}
+
+.page-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.page-canvas.is-rendered { opacity: 1; }
+
+.page-folio {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-family: var(--font-ticker);
+  font-size: 0.65rem;
+  color: var(--ink-soft);
+  opacity: 0.6;
+}
+
+.page-cover {
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.08), transparent 55%),
+    linear-gradient(135deg, var(--maroon-deep), var(--ink) 78%);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 0 1px rgba(169,124,52,0.5), inset 0 0 30px rgba(0,0,0,0.5);
+}
+
+.cover-content {
+  text-align: center;
+  padding: 10%;
+  width: 100%;
+}
+.cover-rule {
+  height: 2px;
+  background: var(--brass-light);
+  margin: 14px auto;
+  width: 60%;
+  opacity: 0.8;
+}
+.cover-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.3rem, 5vw, 2.1rem);
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+}
+.cover-issue {
+  font-family: var(--font-ticker);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brass-light);
+  margin-top: 6px;
+}
+
+/* ==========================================================================
+   Toolbar (footer)
+   ========================================================================== */
+.toolbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 3vw, 26px);
+  padding: 12px clamp(14px, 4vw, 40px) clamp(14px, 2.4vw, 24px);
+  flex-wrap: wrap;
+}
+
+.ticket {
+  font-family: var(--font-ticker);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  background: var(--brass-light);
+  padding: 9px 16px;
+  border-radius: 3px;
+  position: relative;
+  border: 1px dashed var(--maroon-deep);
+  box-shadow: 0 2px 3px rgba(var(--shadow-color), 0.25);
+}
+.ticket::before, .ticket::after {
+  content: "";
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  width: 10px; height: 10px;
+  background: var(--parchment);
+  border-radius: 50%;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+}
+.ticket::before { left: -5px; }
+.ticket::after { right: -5px; }
+
+.toolbar__zoom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.zoom-readout {
+  font-family: var(--font-ticker);
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  min-width: 3.6em;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Loading / error / resume overlays
+   ========================================================================== */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: rgba(237, 226, 200, 0.7);
+  backdrop-filter: blur(2px);
+  transition: opacity 0.25s ease;
+}
+.loading-overlay.is-hidden { opacity: 0; pointer-events: none; }
+
+.loading-spinner {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 3px solid rgba(124,44,38,0.2);
+  border-top-color: var(--maroon);
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-message {
+  font-family: var(--font-ticker);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+}
+
+.error-banner {
+  position: absolute;
+  top: 16px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  background: var(--paper);
+  border: 1px solid var(--maroon);
+  color: var(--ink);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: min(90vw, 480px);
+  box-shadow: 0 6px 18px rgba(var(--shadow-color), 0.3);
+}
+.error-banner.is-hidden { display: none; }
+.error-banner__message { font-size: 0.9rem; }
+
+.resume-toast {
+  position: absolute;
+  bottom: 16px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  box-shadow: 0 6px 18px rgba(var(--shadow-color), 0.35);
+}
+.resume-toast.is-hidden { display: none; }
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+@media (max-width: 760px) {
+  .masthead__row { justify-content: center; text-align: center; }
+  .masthead__title { width: 100%; text-align: center; }
+  .masthead__controls { width: 100%; justify-content: center; }
+  .issue-select { max-width: 60vw; }
+
+  .flipbook-wrap {
+    width: min(94vw, 520px);
+    height: min(70vh, 720px);
+  }
+  .flipbook-shadow { width: min(80vw, 420px); }
+
+  .toolbar { gap: 12px; }
+  .btn--nav { width: 42px; height: 42px; font-size: 1.2rem; }
+}
+
+@media (max-width: 420px) {
+  .toolbar__zoom { order: 10; width: 100%; justify-content: center; }
+}

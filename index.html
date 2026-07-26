@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>The Aleph Telegram</title>
+<meta name="description" content="The Aleph Telegram — a digital magazine reader with real page-turns and true-to-source PDF text." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="parchment-bg" aria-hidden="true"></div>
+
+<header class="masthead">
+  <div class="masthead__row">
+    <h1 class="masthead__title">The Aleph&nbsp;Telegram</h1>
+    <div class="masthead__controls">
+      <label class="issue-select-wrap">
+        <span class="visually-hidden">Choose issue</span>
+        <select id="issueSelect" class="issue-select" aria-label="Choose issue"></select>
+      </label>
+      <a id="downloadBtn" class="btn btn--ghost" href="#" download>Download&nbsp;PDF</a>
+      <button id="fullscreenBtn" class="btn btn--icon" type="button" title="Fullscreen" aria-label="Toggle fullscreen">&#10530;</button>
+    </div>
+  </div>
+  <div class="morse-divider" aria-hidden="true"></div>
+</header>
+
+<main class="stage" id="stage">
+
+  <div class="loading-overlay">
+    <div class="loading-spinner" aria-hidden="true"></div>
+    <div class="loading-message">Setting the type&hellip;</div>
+  </div>
+
+  <div class="error-banner is-hidden" role="alert">
+    <span class="error-banner__message"></span>
+    <button id="retryBtn" class="btn btn--tiny" type="button">Retry</button>
+  </div>
+
+  <div class="resume-toast is-hidden" id="resumeToast">
+    <span id="resumeText"></span>
+    <button id="resumeBtn" class="btn btn--tiny" type="button">Resume</button>
+    <button id="dismissResumeBtn" class="btn btn--tiny btn--ghost" type="button">Start over</button>
+  </div>
+
+  <div class="flipbook-shadow" aria-hidden="true"></div>
+  <div class="flipbook-wrap" id="flipbookWrap">
+    <div id="flipbook" class="flipbook"></div>
+  </div>
+
+</main>
+
+<footer class="toolbar">
+  <button id="prevBtn" class="btn btn--nav" type="button" aria-label="Previous page">&#8249;</button>
+
+  <div class="ticket" id="pageIndicator">PAGE 00 / 00</div>
+
+  <button id="nextBtn" class="btn btn--nav" type="button" aria-label="Next page">&#8250;</button>
+
+  <div class="toolbar__zoom">
+    <button id="zoomOutBtn" class="btn btn--icon" type="button" aria-label="Zoom out">&minus;</button>
+    <span id="zoomReadout" class="zoom-readout">100%</span>
+    <button id="zoomInBtn" class="btn btn--icon" type="button" aria-label="Zoom in">+</button>
+  </div>
+</footer>
+
+<!-- page-flip: MIT licensed, classic UMD build, exposes window.St.PageFlip -->
+<script src="lib/page-flip.browser.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
