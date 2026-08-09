@@ -3,5 +3,10 @@
     "id": "issue-1",
     "title": "Vol.1 | Issue No. 1",
     "file": "issues/Issue-1.pdf"
+  },
+  {
+    "id": "issue-2",
+    "title": "Vol.1 | Issue No. 2",
+    "file": "issues/Issue-2.pdf"
   }
 ]
