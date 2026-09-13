@@ -27,18 +27,41 @@ export class PDFRenderer {
   }
 
   async load(onProgress) {
+    // Guards a subtle race: for large files, PDF.js can fire one more
+    // onProgress tick (usually the final loaded===total one) slightly
+    // AFTER loadingTask.promise has already resolved — the network
+    // event and the promise microtask aren't perfectly synchronized.
+    // If that happens after our caller has already hidden the loading
+    // spinner in response to the resolved promise, that late tick
+    // re-shows it and nothing ever hides it again: the overlay gets
+    // stuck forever on "100%" even though the document (and the
+    // flipbook built from it) loaded and is fully interactive
+    // underneath. Once settled, we simply stop forwarding progress.
+    let settled = false;
+
     const loadingTask = pdfjsLib.getDocument({
       url: this.url,
-      // Keep memory reasonable — we don't need font/stream caching beyond one doc.
-      disableAutoFetch: false,
-      disableStream: false,
+      // Force one plain full-file GET instead of chunked byte-range
+      // requests. GitHub Pages' CDN has a known issue caching partial
+      // (206) range responses incorrectly on repeat visits, which makes
+      // PDF.js's stream reader hang forever waiting on bytes that never
+      // arrive — it looks like the loading spinner freezing at 100%.
+      // A single whole-file request caches normally and avoids this.
+      disableStream: true,
+      disableRange: true,
+      disableAutoFetch: true,
     });
     if (onProgress) {
       loadingTask.onProgress = (p) => {
+        if (settled) return;
         if (p && p.total) onProgress(p.loaded / p.total);
       };
     }
-    this.pdfDoc = await loadingTask.promise;
+    try {
+      this.pdfDoc = await loadingTask.promise;
+    } finally {
+      settled = true;
+    }
     this.numPages = this.pdfDoc.numPages;
     const firstPage = await this._getPage(1);
     this._baseViewport = firstPage.getViewport({ scale: 1 });

@@ -38,6 +38,7 @@ let renderer = null;
 let flipbook = null;
 let zoomScale = 1;
 let wheelCooldown = false;
+let loadToken = 0; // bumped on every openIssue() call; stale callbacks check this before touching the UI
 
 /** Rejects if `promise` hasn't settled within `ms` — used so a stalled
  * network fetch shows the retry banner instead of spinning forever. */
@@ -84,6 +85,8 @@ async function openIssue(issueId) {
   if (!issue) return;
   currentIssue = issue;
 
+  const myToken = ++loadToken; // any callback below first checks this is still current
+
   ui.hideError(stage);
   ui.showSpinner(stage, 'Setting the type\u2026');
   resumeToast.classList.add('is-hidden');
@@ -106,18 +109,22 @@ async function openIssue(issueId) {
     renderer = new PDFRenderer(issue.file);
     await withTimeout(
       renderer.load((frac) => {
+        if (myToken !== loadToken) return; // a newer load has since started — ignore this stale tick
         ui.showSpinner(stage, `Setting the type\u2026 ${Math.round(frac * 100)}%`);
       }),
       45000,
       'PDF took too long to load'
     );
+    if (myToken !== loadToken) return; // superseded while we were awaiting — bail out quietly
 
     flipbook = new Flipbook(flipbookEl, {
       onReady: () => {
+        if (myToken !== loadToken) return;
         ui.hideSpinner(stage);
         maybeOfferResume(issue.id);
       },
       onPageChange: ({ pdfPage, numPdfPages }) => {
+        if (myToken !== loadToken) return;
         ui.updatePageIndicator(pageIndicator, pdfPage, numPdfPages);
         ui.setPrevNextDisabled(prevBtn, nextBtn, pdfPage || 1, numPdfPages || 1);
         if (pdfPage) ui.Bookmarks.save(issue.id, pdfPage);
@@ -126,6 +133,7 @@ async function openIssue(issueId) {
 
     await flipbook.loadDocument(renderer);
   } catch (err) {
+    if (myToken !== loadToken) return; // a newer load already took over — don't show a stale error
     console.error(err);
     ui.hideSpinner(stage);
     ui.showError(stage, `Couldn't open "${issue.title || issue.id}". The PDF may be missing, corrupt, or slow to load — try again.`);
