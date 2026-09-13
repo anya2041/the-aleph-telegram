@@ -39,6 +39,18 @@ let flipbook = null;
 let zoomScale = 1;
 let wheelCooldown = false;
 
+/** Rejects if `promise` hasn't settled within `ms` — used so a stalled
+ * network fetch shows the retry banner instead of spinning forever. */
+function withTimeout(promise, ms, message) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(message || 'Timed out')), ms);
+    promise.then(
+      (v) => { clearTimeout(timer); resolve(v); },
+      (e) => { clearTimeout(timer); reject(e); }
+    );
+  });
+}
+
 async function boot() {
   try {
     issues = await loadIssueList();
@@ -92,9 +104,13 @@ async function openIssue(issueId) {
 
   try {
     renderer = new PDFRenderer(issue.file);
-    await renderer.load((frac) => {
-      ui.showSpinner(stage, `Setting the type\u2026 ${Math.round(frac * 100)}%`);
-    });
+    await withTimeout(
+      renderer.load((frac) => {
+        ui.showSpinner(stage, `Setting the type\u2026 ${Math.round(frac * 100)}%`);
+      }),
+      45000,
+      'PDF took too long to load'
+    );
 
     flipbook = new Flipbook(flipbookEl, {
       onReady: () => {
@@ -112,7 +128,7 @@ async function openIssue(issueId) {
   } catch (err) {
     console.error(err);
     ui.hideSpinner(stage);
-    ui.showError(stage, `Couldn't open "${issue.title || issue.id}". The PDF may be missing or corrupt.`);
+    ui.showError(stage, `Couldn't open "${issue.title || issue.id}". The PDF may be missing, corrupt, or slow to load — try again.`);
   }
 }
 
