@@ -8,5 +8,10 @@
     "id": "issue-2",
     "title": "Vol.1 | Issue No. 2",
     "file": "issues/Issue-2.pdf"
+  },
+  {
+    "id": "issue-3",
+    "title": "Vol.1 | Issue No. 3",
+    "file": "issues/Issue-3.pdf"
   }
 ]
